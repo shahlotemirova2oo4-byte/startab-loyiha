@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load idea_extras %}
+
+{% block title %}Bosh sahifa — StartUp.uz{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero mb-5">
+  <div class="container text-center">
+    <h1 class="display-5 mb-3">Yoshlar uchun startap platforma</h1>
+    <p class="lead mb-4 opacity-75">
+      G'oyalaringizni dunyoga taqdim qiling. Investorlar bilan to'g'ridan-to'g'ri bog'laning.
+    </p>
+    {% if not user.is_authenticated %}
+      <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg me-2">
+        <i class="bi bi-person-plus"></i> Boshlash
+      </a>
+      <a href="{% url 'ideas:list' %}" class="btn btn-outline-light btn-lg">
+        G'oyalarni ko'rish
+      </a>
+    {% else %}
+      {% if user.is_startup %}
+        <a href="{% url 'ideas:create' %}" class="btn btn-light btn-lg me-2">
+          <i class="bi bi-plus-circle"></i> G'oya joylash
+        </a>
+      {% endif %}
+      <a href="{% url 'ideas:list' %}" class="btn btn-outline-light btn-lg">
+        Barcha g'oyalar
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Statistika -->
+<section class="container mb-5">
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="stat-card card text-center p-3 h-100">
+        <div class="stat-icon bg-primary-soft"><i class="bi bi-lightbulb"></i></div>
+        <h3 class="fw-bold mb-0">{{ stats.total_ideas }}</h3>
+        <small class="text-muted">G'oyalar</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card card text-center p-3 h-100">
+        <div class="stat-icon bg-success-soft"><i class="bi bi-check-circle"></i></div>
+        <h3 class="fw-bold mb-0">{{ stats.funded_ideas }}</h3>
+        <small class="text-muted">Moliyalashtirilgan</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card card text-center p-3 h-100">
+        <div class="stat-icon bg-warning-soft"><i class="bi bi-rocket"></i></div>
+        <h3 class="fw-bold mb-0">{{ stats.total_startups }}</h3>
+        <small class="text-muted">Startapchilar</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card card text-center p-3 h-100">
+        <div class="stat-icon bg-info-soft"><i class="bi bi-cash-stack"></i></div>
+        <h3 class="fw-bold mb-0">{{ stats.total_investors }}</h3>
+        <small class="text-muted">Investorlar</small>
+      </div>
+    </div>
+  </div>
+
+  {% if stats.funded_amount %}
+  <div class="alert alert-success mt-3 text-center mb-0 d-flex justify-content-center align-items-center">
+    <i class="bi bi-coin fs-4 me-2"></i>
+    Platformada jami moliyalashtirilgan summa:
+    <strong class="ms-1">{{ stats.funded_amount|som }}</strong>
+  </div>
+  {% endif %}
+</section>
+
+<!-- Top g'oyalar -->
+<section class="container mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 fw-bold mb-0"><i class="bi bi-fire text-danger"></i> Top g'oyalar</h2>
+    <a href="{% url 'ideas:list' %}" class="btn btn-sm btn-outline-primary">Barchasini ko'rish</a>
+  </div>
+
+  {% if top_ideas %}
+    <div class="row g-3">
+      {% for idea in top_ideas %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'partials/idea_card.html' with idea=idea %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">Hozircha g'oyalar yo'q. Birinchi bo'lib joylang!</p>
+  {% endif %}
+</section>
+
+<!-- So'nggi g'oyalar -->
+{% if latest_ideas %}
+<section class="container mb-5">
+  <h2 class="h4 fw-bold mb-3"><i class="bi bi-clock-history text-primary"></i> So'nggi g'oyalar</h2>
+  <div class="row g-3">
+    {% for idea in latest_ideas %}
+      <div class="col-md-6 col-lg-4">
+        {% include 'partials/idea_card.html' with idea=idea %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Top investorlar -->
+{% if top_investors %}
+<section class="container mb-5">
+  <h2 class="h4 fw-bold mb-3"><i class="bi bi-trophy text-warning"></i> Faol investorlar</h2>
+  <div class="row g-3">
+    {% for inv in top_investors %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body d-flex align-items-center">
+            <div class="avatar-circle me-3">
+              {{ inv.first_name|first|default:inv.username|first|upper }}
+            </div>
+            <div>
+              <h6 class="mb-0 fw-bold">{{ inv.get_full_name|default:inv.username }}</h6>
+              <small class="text-muted">
+                {% if inv.investor_profile.company_name %}{{ inv.investor_profile.company_name }} • {% endif %}
+                {{ inv.off_count }} ta taklif
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

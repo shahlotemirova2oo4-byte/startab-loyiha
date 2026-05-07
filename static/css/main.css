@@ -1,0 +1,160 @@
+/* StartUp.uz — umumiy stillar */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+               Arial, "Noto Sans", sans-serif;
+}
+
+/* Hero block */
+.hero {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+  color: white;
+  padding: 4rem 0;
+  border-radius: 0 0 2rem 2rem;
+}
+
+.hero h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Stats card */
+.stat-card {
+  background: white;
+  border: none;
+  border-radius: 1rem;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+.stat-card .stat-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  margin: 0 auto 1rem;
+}
+
+.stat-icon.bg-primary-soft  { background: #e0e7ff; color: #4f46e5; }
+.stat-icon.bg-success-soft  { background: #d1fae5; color: #047857; }
+.stat-icon.bg-warning-soft  { background: #fef3c7; color: #b45309; }
+.stat-icon.bg-info-soft     { background: #dbeafe; color: #1d4ed8; }
+.stat-icon.bg-danger-soft   { background: #fee2e2; color: #b91c1c; }
+.stat-icon.bg-purple-soft   { background: #ede9fe; color: #7c3aed; }
+
+/* Idea card */
+.idea-card {
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 1rem;
+  transition: transform .2s, box-shadow .2s;
+  height: 100%;
+}
+
+.idea-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.06);
+}
+
+.idea-card .card-title {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.idea-card .needed-amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+/* Chat bubbles */
+.chat-window {
+  max-height: 60vh;
+  overflow-y: auto;
+  background: #f9fafb;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: .6rem 1rem;
+  border-radius: 1rem;
+  margin-bottom: .5rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.chat-bubble.mine {
+  background: #4f46e5;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: .25rem;
+}
+
+.chat-bubble.theirs {
+  background: white;
+  color: #1f2937;
+  margin-right: auto;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: .25rem;
+}
+
+.chat-meta {
+  font-size: .75rem;
+  opacity: .7;
+  margin-top: .25rem;
+}
+
+/* Form layout */
+.form-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+/* Avatar */
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #4f46e5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.avatar-circle.lg {
+  width: 96px;
+  height: 96px;
+  font-size: 2rem;
+}
+
+/* Misc */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 2.5rem 0; border-radius: 0 0 1rem 1rem; }
+  .hero h1 { font-size: 1.75rem; }
+}

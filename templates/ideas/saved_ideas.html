@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load idea_extras %}
+
+{% block title %}Saqlangan g'oyalar — StartUp.uz{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="h3 fw-bold mb-4"><i class="bi bi-bookmark-fill text-warning"></i> Saqlangan g'oyalar</h1>
+
+  {% if saved %}
+    <div class="row g-3">
+      {% for s in saved %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'partials/idea_card.html' with idea=s.idea %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-bookmark display-1 text-muted"></i>
+      <p class="text-muted mt-3 mb-3">Hali g'oya saqlamadingiz.</p>
+      <a href="{% url 'ideas:list' %}" class="btn btn-primary">G'oyalarni ko'rish</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

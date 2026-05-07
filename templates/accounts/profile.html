@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load idea_extras %}
+
+{% block title %}Profil — StartUp.uz{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row g-4">
+
+    <!-- Profil va statistika -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm text-center mb-3">
+        <div class="card-body p-4">
+          {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" class="rounded-circle mb-3" style="width:96px;height:96px;object-fit:cover;">
+          {% else %}
+            <div class="avatar-circle lg mx-auto mb-3">
+              {{ user.first_name|first|default:user.username|first|upper }}
+            </div>
+          {% endif %}
+          <h5 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h5>
+          <span class="badge bg-primary">{{ user.get_role_display }}</span>
+          <p class="text-muted small mt-2 mb-0">{{ user.email }}</p>
+          {% if user.phone %}<p class="text-muted small mb-0">{{ user.phone }}</p>{% endif %}
+        </div>
+      </div>
+
+      <!-- Statistika -->
+      {% if user.is_startup %}
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3"><i class="bi bi-bar-chart"></i> Statistika</h6>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Joylangan g'oyalar:</span>
+              <strong>{{ stats.total_ideas }}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Olingan takliflar:</span>
+              <strong>{{ stats.total_offers }}</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">Moliyalashtirilgan:</span>
+              <strong class="text-success">{{ stats.funded_ideas }}</strong>
+            </div>
+          </div>
+        </div>
+      {% elif user.is_investor %}
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3"><i class="bi bi-bar-chart"></i> Statistika</h6>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Yuborilgan takliflar:</span>
+              <strong>{{ stats.total_offers }}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Qabul qilingan:</span>
+              <strong class="text-success">{{ stats.accepted_offers }}</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">Saqlanganlar:</span>
+              <strong>{{ stats.saved_count }}</strong>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Tahrirlash formasi -->
+    <div class="col-lg-8">
+      <div class="form-section">
+        <h2 class="h4 fw-bold mb-4">Profil maʼlumotlari</h2>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          <h6 class="text-muted mb-3 mt-2">Asosiy ma'lumotlar</h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">{{ user_form.first_name.label }}</label>
+              {{ user_form.first_name }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ user_form.last_name.label }}</label>
+              {{ user_form.last_name }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ user_form.email.label }}</label>
+              {{ user_form.email }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ user_form.phone.label }}</label>
+              {{ user_form.phone }}
+            </div>
+          </div>
+
+          <hr>
+          <h6 class="text-muted mb-3 mt-3">Qo'shimcha ma'lumotlar</h6>
+
+          <div class="row g-3">
+            {% for field in profile_form %}
+              <div class="col-md-{% if field.name == 'bio' %}12{% else %}6{% endif %}">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="text-muted d-block">{{ field.help_text }}</small>{% endif %}
+                {% if field.errors %}<div class="text-danger small">{{ field.errors|first }}</div>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <button type="submit" class="btn btn-primary mt-4">
+            <i class="bi bi-check-lg"></i> Saqlash
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

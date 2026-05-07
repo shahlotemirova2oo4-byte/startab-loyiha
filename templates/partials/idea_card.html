@@ -1,0 +1,29 @@
+{% load idea_extras %}
+<div class="card idea-card shadow-sm">
+  {% if idea.is_image %}
+    <img src="{{ idea.file.url }}" class="card-img-top" alt="{{ idea.title }}"
+         style="height: 180px; object-fit: cover; border-radius: 1rem 1rem 0 0;">
+  {% endif %}
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <span class="badge bg-light text-dark border">
+        <i class="bi bi-tag"></i> {{ idea.get_industry_display }}
+      </span>
+      {{ idea.status|status_badge }}
+    </div>
+    <h5 class="card-title text-truncate-2">{{ idea.title }}</h5>
+    <p class="card-text text-muted text-truncate-3 small mb-3">{{ idea.short_description }}</p>
+    <div class="needed-amount mb-2">
+      <i class="bi bi-cash-coin"></i> {{ idea.needed_amount|som }}
+    </div>
+    <div class="d-flex justify-content-between align-items-center text-muted small">
+      <span><i class="bi bi-geo-alt"></i> {{ idea.get_region_display }}</span>
+      <span><i class="bi bi-people"></i> {{ idea.offers_count }} taklif</span>
+    </div>
+  </div>
+  <div class="card-footer bg-white border-0">
+    <a href="{{ idea.get_absolute_url }}" class="btn btn-primary w-100">
+      Batafsil <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load idea_extras %}
+
+{% block title %}{{ idea.title }} — StartUp.uz{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row g-4">
+
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        {% if idea.is_image %}
+          <img src="{{ idea.file.url }}" class="card-img-top" alt="{{ idea.title }}"
+               style="max-height: 400px; object-fit: cover; border-radius: .375rem .375rem 0 0;">
+        {% endif %}
+
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+            <div>
+              <span class="badge bg-light text-dark border me-1">
+                <i class="bi bi-tag"></i> {{ idea.get_industry_display }}
+              </span>
+              <span class="badge bg-light text-dark border me-1">
+                <i class="bi bi-geo-alt"></i> {{ idea.get_region_display }}
+              </span>
+              {{ idea.status|status_badge }}
+            </div>
+            <small class="text-muted">{{ idea.created_at|date:"d.m.Y" }}</small>
+          </div>
+
+          <h1 class="h2 fw-bold mb-3">{{ idea.title }}</h1>
+          <p class="lead text-muted">{{ idea.short_description }}</p>
+
+          <hr>
+
+          <h5 class="fw-bold mt-4">Batafsil</h5>
+          <p style="white-space: pre-line;">{{ idea.description }}</p>
+
+          {% if idea.is_pdf %}
+            <a href="{{ idea.file.url }}" target="_blank" class="btn btn-outline-danger mt-3">
+              <i class="bi bi-file-earmark-pdf"></i> PDF hujjatni yuklab olish
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Idea owner controls -->
+      {% if user == idea.author %}
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'ideas:edit' idea.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil"></i> Tahrirlash
+          </a>
+          <form method="post" action="{% url 'ideas:delete' idea.pk %}"
+                onsubmit="return confirm('Rostdan ham o\'chirilsinmi?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+              <i class="bi bi-trash"></i> O'chirish
+            </button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+      <!-- Mablag' / shartlar -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body p-4">
+          <small class="text-muted">Kerakli mablag'</small>
+          <h2 class="fw-bold text-primary mb-3">{{ idea.needed_amount|som }}</h2>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <span class="text-muted">Taklif qilinadigan ulush:</span>
+            <strong>{{ idea.equity_percent }}%</strong>
+          </div>
+          <div class="d-flex justify-content-between border-top pt-3 mt-3">
+            <span class="text-muted">Olingan takliflar:</span>
+            <strong>{{ idea.offers_count }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Muallif -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body p-4 text-center">
+          <div class="avatar-circle lg mx-auto mb-3">
+            {{ idea.author.first_name|first|default:idea.author.username|first|upper }}
+          </div>
+          <h6 class="fw-bold mb-0">{{ idea.author.get_full_name|default:idea.author.username }}</h6>
+          <small class="text-muted">Startapchi</small>
+          {% if idea.author.startup_profile.bio %}
+            <p class="small text-muted mt-2 mb-0">{{ idea.author.startup_profile.bio }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Investor harakatlari -->
+      {% if user.is_authenticated and user.is_investor %}
+
+        {% if user_offer %}
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body p-4">
+              <h6 class="fw-bold mb-2">Sizning taklifingiz</h6>
+              <p class="mb-1"><strong>{{ user_offer.amount|som }}</strong> ({{ user_offer.equity_percent }}%)</p>
+              <p class="mb-2">{{ user_offer.status|status_badge }}</p>
+              <a href="{% url 'ideas:offer_chat' user_offer.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                <i class="bi bi-chat-dots"></i> Chat ochish
+              </a>
+            </div>
+          </div>
+
+        {% elif idea.is_open %}
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body p-4">
+              <h6 class="fw-bold mb-3">Investitsiya qilish</h6>
+              <form method="post" action="{% url 'ideas:offer_create' idea.pk %}">
+                {% csrf_token %}
+                <div class="mb-2">
+                  <label class="form-label small">Taklif (so'm)</label>
+                  {{ offer_form.amount }}
+                  {% if offer_form.amount.errors %}
+                    <div class="text-danger small">{{ offer_form.amount.errors|first }}</div>
+                  {% endif %}
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small">Ulush (%)</label>
+                  {{ offer_form.equity_percent }}
+                  {% if offer_form.equity_percent.errors %}
+                    <div class="text-danger small">{{ offer_form.equity_percent.errors|first }}</div>
+                  {% endif %}
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Xabar (ixtiyoriy)</label>
+                  {{ offer_form.message }}
+                </div>
+                <button type="submit" class="btn btn-success w-100">
+                  <i class="bi bi-send"></i> Taklif yuborish
+                </button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <div class="alert alert-info">Bu g'oya hozir takliflarga ochiq emas.</div>
+        {% endif %}
+
+        <!-- Save / unsave -->
+        <form method="post" action="{% url 'ideas:toggle_save' idea.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button type="submit" class="btn btn-outline-secondary w-100">
+            {% if is_saved %}
+              <i class="bi bi-bookmark-fill text-warning"></i> Saqlangandan olib tashlash
+            {% else %}
+              <i class="bi bi-bookmark"></i> Saqlash
+            {% endif %}
+          </button>
+        </form>
+
+      {% elif not user.is_authenticated %}
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle"></i>
+          Taklif yuborish uchun
+          <a href="{% url 'accounts:login' %}">tizimga kiring</a> yoki
+          <a href="{% url 'accounts:register' %}">ro'yxatdan o'ting</a>.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

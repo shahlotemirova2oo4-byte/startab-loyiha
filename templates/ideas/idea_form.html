@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_create %}Yangi g'oya{% else %}G'oyani tahrirlash{% endif %} — StartUp.uz{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="form-section">
+        <h1 class="h3 fw-bold mb-4">
+          {% if is_create %}
+            <i class="bi bi-plus-circle text-primary"></i> Yangi g'oya joylash
+          {% else %}
+            <i class="bi bi-pencil text-primary"></i> G'oyani tahrirlash
+          {% endif %}
+        </h1>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% if form.title.errors %}<div class="text-danger small">{{ form.title.errors|first }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.short_description.label }}</label>
+            {{ form.short_description }}
+            <small class="text-muted">Ro'yxatda ko'rinadigan qisqa tavsif (max 300 belgi)</small>
+            {% if form.short_description.errors %}<div class="text-danger small">{{ form.short_description.errors|first }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.description.label }}</label>
+            {{ form.description }}
+            {% if form.description.errors %}<div class="text-danger small">{{ form.description.errors|first }}</div>{% endif %}
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">{{ form.needed_amount.label }}</label>
+              {{ form.needed_amount }}
+              {% if form.needed_amount.errors %}<div class="text-danger small">{{ form.needed_amount.errors|first }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ form.equity_percent.label }}</label>
+              {{ form.equity_percent }}
+              {% if form.equity_percent.errors %}<div class="text-danger small">{{ form.equity_percent.errors|first }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">{{ form.industry.label }}</label>
+              {{ form.industry }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ form.region.label }}</label>
+              {{ form.region }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">{{ form.file.label }}</label>
+            {{ form.file }}
+            <small class="text-muted">{{ form.file.help_text }}</small>
+            {% if form.file.errors %}<div class="text-danger small">{{ form.file.errors|first }}</div>{% endif %}
+            {% if not is_create and idea.file %}
+              <div class="mt-2">
+                <small>Joriy fayl:
+                  <a href="{{ idea.file.url }}" target="_blank">{{ idea.file.name }}</a>
+                </small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg"></i> Saqlash
+            </button>
+            <a href="{% if is_create %}{% url 'ideas:list' %}{% else %}{{ idea.get_absolute_url }}{% endif %}"
+               class="btn btn-outline-secondary">Bekor qilish</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load idea_extras %}
+
+{% block title %}Chat — {{ other_user.get_full_name|default:other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <!-- Header -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body d-flex align-items-center">
+          <a href="{% url 'ideas:inbox' %}" class="btn btn-sm btn-outline-secondary me-3">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+          <div class="avatar-circle me-3">
+            {{ other_user.first_name|first|default:other_user.username|first|upper }}
+          </div>
+          <div class="flex-grow-1">
+            <h6 class="mb-0 fw-bold">{{ other_user.get_full_name|default:other_user.username }}</h6>
+            <small class="text-muted">
+              <a href="{{ offer.idea.get_absolute_url }}" class="text-decoration-none">
+                {{ offer.idea.title }}
+              </a>
+              {{ offer.status|status_badge }}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="chat-window mb-3" id="chatWindow">
+            {% for msg in chat_messages %}
+              <div class="d-flex {% if msg.sender == user %}justify-content-end{% endif %}">
+                <div class="chat-bubble {% if msg.sender == user %}mine{% else %}theirs{% endif %}">
+                  {{ msg.content|linebreaksbr }}
+                  <div class="chat-meta">
+                    {{ msg.created_at|date:"d.m.Y H:i" }}
+                    {% if msg.sender == user %}
+                      {% if msg.is_read %}
+                        <i class="bi bi-check-all"></i>
+                      {% else %}
+                        <i class="bi bi-check"></i>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-muted text-center my-4">Hali xabar yo'q. Birinchi bo'lib xabar yuboring!</p>
+            {% endfor %}
+          </div>
+
+          <form method="post" class="d-flex gap-2">
+            {% csrf_token %}
+            {{ form.content }}
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-send"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Chatni eng pastki qismiga aylantirish
+  (function () {
+    var chat = document.getElementById('chatWindow');
+    if (chat) chat.scrollTop = chat.scrollHeight;
+  })();
+</script>
+{% endblock %}

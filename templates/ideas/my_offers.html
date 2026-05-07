@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load idea_extras %}
+
+{% block title %}Mening takliflarim — StartUp.uz{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="h3 fw-bold mb-4"><i class="bi bi-send text-primary"></i> Mening takliflarim</h1>
+
+  {% if offers %}
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>G'oya</th>
+              <th>Startapchi</th>
+              <th>Mablag'</th>
+              <th>Ulush</th>
+              <th>Status</th>
+              <th>Sana</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for offer in offers %}
+              <tr>
+                <td>
+                  <a href="{{ offer.idea.get_absolute_url }}" class="fw-semibold text-decoration-none">
+                    {{ offer.idea.title }}
+                  </a>
+                </td>
+                <td>{{ offer.idea.author.get_full_name|default:offer.idea.author.username }}</td>
+                <td>{{ offer.amount|som }}</td>
+                <td>{{ offer.equity_percent }}%</td>
+                <td>{{ offer.status|status_badge }}</td>
+                <td><small class="text-muted">{{ offer.created_at|date:"d.m.Y H:i" }}</small></td>
+                <td class="text-end">
+                  <a href="{% url 'ideas:offer_chat' offer.pk %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-chat-dots"></i> Chat
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-inbox display-1 text-muted"></i>
+      <p class="text-muted mt-3 mb-3">Hali taklif yubormadingiz.</p>
+      <a href="{% url 'ideas:list' %}" class="btn btn-primary">G'oyalarni ko'rish</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
