@@ -2,12 +2,14 @@
 Django settings — Yoshlar uchun startap platforma.
 """
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-change-me-in-production-9z8x7c6v5b4n3m2k1j0h9g8f'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+# Render uchun environment dan oladi, aks holda default
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-me-in-production-9z8x7c6v5b4n3m2k1j0h9g8f')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = ['*', 'startab-loyiha.onrender.com', 'shahlo.pythonanywhere.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -17,13 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    # local
     'accounts',
     'ideas',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # static files uchun
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,24 +77,21 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom user
 AUTH_USER_MODEL = 'accounts.User'
 
-# Auth redirects
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'ideas:home'
 LOGOUT_REDIRECT_URL = 'ideas:home'
 
-# File upload
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 
-# Messages
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'secondary',
